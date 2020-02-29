@@ -10,7 +10,7 @@ const items = [
     name:"Todos ",
     link:"https://master.d3cslmw4si24vo.amplifyapp.com/"
   },
-]
+] 
 
 
 
