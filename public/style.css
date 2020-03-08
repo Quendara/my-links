@@ -1,0 +1,10 @@
+h1, p {
+  font-family: Lato;
+}
+
+.overflow {
+ 
+  text-overflow:ellipsis;
+  white-space: nowrap;
+    overflow: hidden;
+}

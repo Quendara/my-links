@@ -10,6 +10,12 @@ const items = [
     name:"Todos ",
     link:"https://master.d3cslmw4si24vo.amplifyapp.com/"
   },
+  {
+    name:"Bücherei ",
+    link:"https://katalog.dortmund.de/aDISWeb/app?service=direct/0/Home/%24DirectLink&sp=SOPAC02&sp=SBK00000000"
+  },  
+
+  
 ] 
 
 
@@ -29,8 +35,8 @@ class App extends Component {
       <div class="list-group">
           { items.map(( item, index) => (
             <a href={item.link} target="_blank" class="list-group-item  ">
-              <h5>{item.name}</h5>
-              <small class="text-muted">{item.link}</small> 
+              <b>{item.name}</b>
+              <small class="overflow text-muted">{item.link}</small> 
               
             </a>
           ))}
