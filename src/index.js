@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import { List } from "./list";
 
 const items = [
   {
@@ -32,16 +33,7 @@ class App extends Component {
     return (
       <div className="container">
       <h3>Links</h3>
-      <div class="list-group">
-          { items.map(( item, index) => (
-            <a href={item.link} target="_blank" class="list-group-item  ">
-              <b>{item.name}</b>
-              <small class="overflow text-muted">{item.link}</small> 
-              
-            </a>
-          ))}
-        
-      </div>
+      <List items={items} />
       </div>
     );
   }
