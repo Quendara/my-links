@@ -1,9 +1,9 @@
 import React, { Component, useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faMinusCircle } from "@fortawesome/free-solid-svg-icons";
 
-const ToDoAddForm = ({ onClickFunction, name }) => {
+const AddForm = ({ onClickFunction, name }) => {
   // props replaced by
 
   const [linkName, setLinkName] = useState("");
@@ -13,7 +13,7 @@ const ToDoAddForm = ({ onClickFunction, name }) => {
   const handleClick = event => {
     event.preventDefault();
 
-    if (linkName.length > 0 && linkUrl.length > 0) {
+    if (linkName.length > 0 ) {// && linkUrl.length > 0) {
       // send ONLY when it's filled out
       onClickFunction(linkName, linkUrl);
 
@@ -68,28 +68,58 @@ const ToDoAddForm = ({ onClickFunction, name }) => {
   );
 };
 
+const ListEl = ({ name, link, id, removeClickFunction }) => {
+
+  
+  const handleDeleteClick = () => {
+    removeClickFunction( id )  
+  }
+
+  return (
+    <div key={id} className="list-group-item  ">
+      <div className="row">
+        <div className="col-10">
+          <a href={link} target="_blank">
+            <h5>{name}</h5>
+          </a>
+          <small className="text-muted">{link}</small>
+        </div>
+        <div className="col-1">
+          <a onClick={handleDeleteClick} className="text-danger" pull-right>
+            <FontAwesomeIcon icon={faMinusCircle} />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+};
+ 
 function List(props) {
   const [items, setItems] = useState(props.items);
 
   // handles
   const addItemHandle = (name, link) => {
-    setItems([...items, { name, link }]); // push to the end
+    const id = new Date().getTime() 
+    setItems([...items, { name, link, id }]); // push to the end
   };
+ 
+  const removeItemHandle = id => {
+    const items2 = items.filter(item => item.id !== id );
+    setItems( items2 ); // push to the end
+  }; 
 
   return (
     <div className="list-group">
       {items.map((item, index) => (
-        <a
-          key={index}
-          href={item.link}
-          target="_blank"
-          className="list-group-item  "
-        >
-          <h5>{item.name}</h5>
-          <small className="text-muted">{item.link}</small>
-        </a>
+        <ListEl
+          id={item.id}
+          name={item.name}
+          link={item.link}
+          removeClickFunction={ removeItemHandle }
+        />
       ))}
-      <ToDoAddForm onClickFunction={addItemHandle} name={"Add"} />
+
+      <AddForm onClickFunction={addItemHandle} name={"Add"} />
     </div>
   );
 }
