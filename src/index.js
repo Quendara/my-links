@@ -5,9 +5,15 @@ import { List } from "./list";
 const items = [
   {
     id: 1,
-    name: "Tracking ",
-    link: "https://master.d1skuzk79uqu7w.amplifyapp.com/"
+    name: "Tracking - André ",
+    link: "https://master.d1skuzk79uqu7w.amplifyapp.com/search?user=andre"    
   },
+  {
+    id: 11,
+    name: "Tracking - Irena",
+    link: "https://master.d1skuzk79uqu7w.amplifyapp.com/search?user=irena"    
+  },
+
   {
     id: 2,
     name: "Todos ",
