@@ -69,7 +69,6 @@ const AddForm = ({ onClickFunction, name }) => {
 };
 
 const ListEl = ({ name, link, id, removeClickFunction }) => {
-
   
   const handleDeleteClick = () => {
     removeClickFunction( id )  
