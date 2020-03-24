@@ -1,36 +1,15 @@
-import React, { Component, useState } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { render } from "react-dom";
 import { List } from "./list";
 import { Auth } from "./auth";
 
-const items = [
-  {
-    id: 1,
-    name: "Tracking - André ",
-    link: "https://master.d1skuzk79uqu7w.amplifyapp.com/search?user=andre"
-  },
-  {
-    id: 11,
-    name: "Tracking - Irena",
-    link: "https://master.d1skuzk79uqu7w.amplifyapp.com/search?user=irena"
-  },
-
-  {
-    id: 2,
-    name: "Todos ",
-    link: "https://master.d3cslmw4si24vo.amplifyapp.com/"
-  },
-  {
-    id: 3,
-    name: "Bücherei ",
-    link:
-      "https://katalog.dortmund.de/aDISWeb/app?service=direct/0/Home/%24DirectLink&sp=SOPAC02&sp=SBK00000000"
-  }
-];
+import Settings from "./Settings";
 
 const App = () => {
   const [username, setUsername] = useState("");
   const [jwtTocken, setJwtToken] = useState("");
+  const [items, setItems] = useState([]);
+  const [once, setOnce] = useState(true);
 
   const authSuccessCallback = (username, token) => {
     setUsername(username);
@@ -40,18 +19,49 @@ const App = () => {
     console.log("authSuccess", token);
   };
 
+  useEffect(() => {
+    const fakeToken = "bnbvbnvbnvnb";
+
+    // if (jwtTocken.length > 0 && items.length == 0 && once )
+    if (once) {
+      setOnce(false);
+      // fetch URL with valid token
+      const url = Settings.baseAwsUrl + "links";
+
+      console.log("useEffect");
+
+      const options = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: fakeToken
+        }
+      }; 
+
+      fetch(url, options)
+        .then(res => res.json())
+        .then(
+          result => {
+            console.log("result", result);
+            setItems(result);
+          },
+          function(error) {
+            console.error( error.message )
+            
+          }
+        );
+    }
+  });
+
   return (
     <div className="container">
       <nav className="navbar navbar-expand bg-dark">
         <a className="navbar-brand" href="#">
           Home
         </a>
-        <Auth authSuccessCallback= {authSuccessCallback}   />
+        <Auth authSuccessCallback={authSuccessCallback} />
       </nav>
       <hr />
-      { username.length > 0 &&
-      <List items={items} />
-      }
+      {username.length > 0 && <List items={items} />}
     </div>
   );
 };
