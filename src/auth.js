@@ -6,7 +6,7 @@ import {
   faSignOutAlt
 } from "@fortawesome/free-solid-svg-icons";
 
-import { AmazonCognitoIdentity } from "amazon-cognito-identity-js";
+// import { AmazonCognitoIdentity } from "amazon-cognito-identity-js";
 
 import jwt_decode from "jwt-decode";
 
@@ -73,11 +73,18 @@ const Auth = ({ authSuccessCallback }) => {
   };
 
   const signOut = () => {
+    console.log("signOut");
     if (cognitoUser != null) {
-      console.log("signOut");
-      cognitoUser.signOut();
+      console.log("cognitoUser", cognitoUser);
+      
       setUsername("");
+      setPassword("");
+      setAuthError("")
       setCognitoUser(null);
+
+      cognitoUser.signOut();
+      
+      
       authSuccessCallback("", "");
     }
   };
@@ -166,13 +173,14 @@ const Auth = ({ authSuccessCallback }) => {
         <button className="btn btn-primary">
           <FontAwesomeIcon icon={faAngleDoubleRight} />
         </button>
+        { authError }
       </form>
     );
   } else {
     return (
       <>
         <button className="btn btn-primary mr-sm-2">
-          {username} <FontAwesomeIcon icon={faSignOutAlt} onClick={signOut} />
+          {username} {" "} <FontAwesomeIcon icon={faSignOutAlt} onClick={signOut} />
         </button>
       </>
     );
