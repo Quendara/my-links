@@ -29,27 +29,31 @@ const items = [
 ];
 
 const App = () => {
-  const [username, setUsername] = useState(false);
+  const [username, setUsername] = useState("");
   const [jwtTocken, setJwtToken] = useState("");
 
-  const authSuccessCallback = ( username, token ) => {
-     setUsername( username )
-     setJwtToken( token )
+  const authSuccessCallback = (username, token) => {
+    setUsername(username);
+    setJwtToken(token);
 
-     console.log( "username", username )
-     console.log( "authSuccess", token )
+    console.log("username", username);
+    console.log("authSuccess", token);
   };
 
-  if (username.length > 0) {
-    return ( 
-      <div className="container">
-        <hr />
-        <List items={items} />
-      </div>
-    );
-  } else {
-    return <Auth authSuccessCallback={authSuccessCallback} />;
-  }
+  return (
+    <div className="container">
+      <nav className="navbar navbar-expand bg-dark">
+        <a className="navbar-brand" href="#">
+          Home
+        </a>
+        <Auth authSuccessCallback= {authSuccessCallback}   />
+      </nav>
+      <hr />
+      { username.length > 0 &&
+      <List items={items} />
+      }
+    </div>
+  );
 };
 
 render(<App />, document.getElementById("root"));

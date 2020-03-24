@@ -1,16 +1,25 @@
-import React, { Component, useState } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faAngleDoubleRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faAngleDoubleRight,
+  faSignOutAlt
+} from "@fortawesome/free-solid-svg-icons";
 
 import { AmazonCognitoIdentity } from "amazon-cognito-identity-js";
 
 import jwt_decode from "jwt-decode";
 
-// https://www.npmjs.com/package/amazon-cognito-identity-js 
+// https://www.npmjs.com/package/amazon-cognito-identity-js
 
 // Or, using CommonJS modules
 require("cross-fetch/polyfill");
 var AmazonCognitoIdentity = require("amazon-cognito-identity-js");
+
+const poolData = {
+  UserPoolId: "eu-central-1_8LkzpXcOV",
+  ClientId: "5v3et57vfoqijj81g3ksbidm5k"
+};
 
 const Auth = ({ authSuccessCallback }) => {
   const [username, setUsername] = useState("Test");
@@ -18,6 +27,38 @@ const Auth = ({ authSuccessCallback }) => {
   const [authError, setAuthError] = useState("");
   const [token, setToken] = useState("");
   const [trySend, setTrySend] = useState(false);
+
+  const [cognitoUser, setCognitoUser] = useState(null);
+
+  useEffect(() => { 
+    // check if user is already logged in
+    if (cognitoUser == null) {
+      // Update the document title using the browser API
+      console.log("useEffect called");
+      const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+      const cognitoUser = userPool.getCurrentUser();
+
+      console.log("cognitoUser", cognitoUser);
+
+      if (cognitoUser != null) {
+        cognitoUser.getSession(function(err, session) {
+          if (err) {
+            alert(err.message || JSON.stringify(err));
+            return;
+          }
+          console.log("session validity: " + session.isValid());
+
+          const username = cognitoUser["username"];
+          const jwtToken = session.getIdToken().getJwtToken();
+
+          setCognitoUser(cognitoUser);
+          setUsername(username);
+          // callback to parent
+          authSuccessCallback(username, jwtToken);
+        });
+      }
+    }
+  });
 
   const handleClick = event => {
     event.preventDefault();
@@ -27,13 +68,17 @@ const Auth = ({ authSuccessCallback }) => {
       // authSuccessCallback(token);
 
       authImpl(username, password);
-
-      // setUsername("");
-      // setPassword("");
-      // setTrySend(false);
     } else {
-      // indicate that user has tried to send, now how potenial issues on UI
-      // setTrySend(true);
+    }
+  };
+
+  const signOut = () => {
+    if (cognitoUser != null) {
+      console.log("signOut");
+      cognitoUser.signOut();
+      setUsername("");
+      setCognitoUser(null);
+      authSuccessCallback("", "");
     }
   };
 
@@ -49,11 +94,7 @@ const Auth = ({ authSuccessCallback }) => {
       authenticationData
     );
 
-    console.log( authenticationData, "authenticationDetails")
-    const poolData = {
-      UserPoolId: "eu-central-1_8LkzpXcOV",
-      ClientId: "5v3et57vfoqijj81g3ksbidm5k"
-    };
+    console.log(authenticationData, "authenticationDetails");
 
     const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
     const userData = {
@@ -70,8 +111,6 @@ const Auth = ({ authSuccessCallback }) => {
     //     console.log('call result: ' + result);
     // });
 
-
-
     cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: function(result) {
         var accessToken = result.getAccessToken().getJwtToken();
@@ -82,23 +121,24 @@ const Auth = ({ authSuccessCallback }) => {
         let decoded = jwt_decode(idToken);
         console.log(decoded);
 
-        let username = decoded['cognito:username']
+        let username = decoded["cognito:username"];
 
         // callback to parent
-        authSuccessCallback( username, idToken  )
+        authSuccessCallback(username, idToken);
 
-        setAuthError( "Success" +  JSON.stringify(decoded) );
+        setAuthError("Success" + JSON.stringify(decoded));
+        setCognitoUser(cognitoUser);
       },
 
       onFailure: function(err) {
-        console.error( "Cannot log in " , JSON.stringify(err));
-        setAuthError( "Cannot log in " +  JSON.stringify(err));
+        console.error("Cannot log in ", JSON.stringify(err));
+        setAuthError("Cannot log in " + JSON.stringify(err));
       }
     });
   };
 
   const getInputClass = val => {
-    let ret = "form-control";
+    let ret = "form-control mr-sm-2";
     if (val.length > 0) {
       ret += " is-valid";
     } else if (trySend) {
@@ -108,37 +148,35 @@ const Auth = ({ authSuccessCallback }) => {
     return ret;
   };
 
-  return (
-    <a className="list-group-item  ">
-      <form onSubmit={handleClick}>
-        <div className="form-row">
-          <div className="col-6 col-sm-5 mb-3">
-            <input
-              value={username}
-              className={getInputClass(username)}
-              placeholder="Name"
-              onChange={e => setUsername(e.target.value)}
-            />
-          </div>
-          <div className="col-6 col-sm-5 mb-3">
-            <input
-              value={password}
-              className={getInputClass(password)}
-              placeholder="Password"
-              onChange={e => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="col-12 col-sm-2 ">
-            <button className="btn btn-primary">
-              <FontAwesomeIcon icon={faAngleDoubleRight} />
-            </button>
-          </div>
-        </div>
+  if (cognitoUser == null) {
+    return (
+      <form className="form-inline" onSubmit={handleClick}>
+        <input
+          value={username}
+          className={getInputClass(username)}
+          placeholder="Name"
+          onChange={e => setUsername(e.target.value)}
+        />
+        <input
+          value={password}
+          className={getInputClass(password)}
+          placeholder="Password"
+          onChange={e => setPassword(e.target.value)}
+        />
+        <button className="btn btn-primary">
+          <FontAwesomeIcon icon={faAngleDoubleRight} />
+        </button>
       </form>
-
-      <b>{authError}</b>
-    </a>
-  );
+    );
+  } else {
+    return (
+      <>
+        <button className="btn btn-primary mr-sm-2">
+          {username} <FontAwesomeIcon icon={faSignOutAlt} onClick={signOut} />
+        </button>
+      </>
+    );
+  }
 };
 
 export { Auth };
