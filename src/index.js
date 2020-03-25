@@ -17,23 +17,21 @@ const App = () => {
 
     console.log("username", username);
     console.log("authSuccess", token);
-  };
 
-  useEffect(() => {
-    const fakeToken = "bnbvbnvbnvnb";
-
-    // if (jwtTocken.length > 0 && items.length == 0 && once )
-    if (once) {
+    if (token.length > 0 && items.length == 0 ) {
+      // if (once) {
       setOnce(false);
       // fetch URL with valid token
       const url = Settings.baseAwsUrl + "links";
 
       console.log("useEffect");
 
+      const fakeToken = "bnbvbnvbnvnb";
+
       const options = {
         headers: {
           "Content-Type": "application/json",
-          Authorization: fakeToken
+          Authorization: token
         }
       };
 
@@ -44,11 +42,40 @@ const App = () => {
             console.log("result", result);
             setItems(result);
           },
-          function(error) {
-            console.error(error.message);
+          (error) => {
+            console.error( "Could not load links : ", error.message);
           }
-        );
+        )
+        .catch(err => { console.log( "XX", err) })
     }
+  };
+
+  useEffect(() => {
+    // const fakeToken = "bnbvbnvbnvnb";
+    // if (jwtTocken.length > 0 && items.length == 0 && once )
+    // // if (once) {
+    //   setOnce(false);
+    //   // fetch URL with valid token
+    //   const url = Settings.baseAwsUrl + "links";
+    //   console.log("useEffect");
+    //   const options = {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: fakeToken
+    //     }
+    //   };
+    //   fetch(url, options)
+    //     .then(res => res.json())
+    //     .then(
+    //       result => {
+    //         console.log("result", result);
+    //         setItems(result);
+    //       },
+    //       function(error) {
+    //         console.error(error.message);
+    //       }
+    //     );
+    // }
   });
 
   // handles
@@ -64,8 +91,9 @@ const App = () => {
 
   return (
     <div className="container">
-      <nav className="navbar navbar-expand bg-dark">
-        <a className="navbar-brand" href="#">
+      <br />
+      <nav className="navbar navbar-dark bg-dark">
+        <a className="navbar-brand mr-auto " href="#" >
           Home
         </a>
         <Auth authSuccessCallback={authSuccessCallback} />
