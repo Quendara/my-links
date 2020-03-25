@@ -35,7 +35,7 @@ const App = () => {
           "Content-Type": "application/json",
           Authorization: fakeToken
         }
-      }; 
+      };
 
       fetch(url, options)
         .then(res => res.json())
@@ -45,12 +45,22 @@ const App = () => {
             setItems(result);
           },
           function(error) {
-            console.error( error.message )
-            
+            console.error(error.message);
           }
         );
     }
   });
+
+  // handles
+  const addItemHandle = (name, link) => {
+    const id = new Date().getTime();
+    setItems([...items, { name, link, id }]); // push to the end
+  };
+
+  const removeItemHandle = id => {
+    const items2 = items.filter(item => item.id !== id);
+    setItems(items2); // push to the end
+  };
 
   return (
     <div className="container">
@@ -61,7 +71,13 @@ const App = () => {
         <Auth authSuccessCallback={authSuccessCallback} />
       </nav>
       <hr />
-      {username.length > 0 && <List items={items} />}
+      {username.length > 0 && (
+        <List
+          items={items}
+          addItemHandle={addItemHandle}
+          removeItemHandle={removeItemHandle}
+        />
+      )}
     </div>
   );
 };

@@ -84,9 +84,11 @@ const ListEl = ({ name, link, id, removeClickFunction }) => {
           <small className="text-muted">{link}</small>
         </div>
         <div className="col-1">
+          { removeClickFunction != undefined &&
           <a onClick={handleDeleteClick} className="text-danger" pull-right>
             <FontAwesomeIcon icon={faMinusCircle} />
           </a>
+          }
         </div>
       </div>
     </div>
@@ -94,31 +96,24 @@ const ListEl = ({ name, link, id, removeClickFunction }) => {
 };
  
 function List(props) {
-  const [items, setItems] = useState(props.items);
 
-  // handles
-  const addItemHandle = (name, link) => {
-    const id = new Date().getTime() 
-    setItems([...items, { name, link, id }]); // push to the end
-  };
- 
-  const removeItemHandle = id => {
-    const items2 = items.filter(item => item.id !== id );
-    setItems( items2 ); // push to the end
-  }; 
 
   return (
     <div className="list-group">
-      {items.map((item, index) => (
+      {props.items.map((item, index) => (
         <ListEl
           id={item.id}
           name={item.name}
           link={item.link}
-          removeClickFunction={ removeItemHandle }
+          removeClickFunction={ props.removeItemHandle }
         />
       ))}
 
-      <AddForm onClickFunction={addItemHandle} name={"Add"} />
+      {props.addItemHandle != undefined &&
+      <AddForm onClickFunction={props.addItemHandle} name={"Add"} />
+      }
+
+      
     </div>
   );
 }

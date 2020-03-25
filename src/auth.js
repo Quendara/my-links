@@ -179,8 +179,8 @@ const Auth = ({ authSuccessCallback }) => {
   } else {
     return (
       <>
-        <button className="btn btn-primary mr-sm-2">
-          {username} {" "} <FontAwesomeIcon icon={faSignOutAlt} onClick={signOut} />
+        <button className="btn btn-primary mr-sm-2" onClick={signOut} >
+          {username} {" "} <FontAwesomeIcon icon={faSignOutAlt} />
         </button>
       </>
     );
