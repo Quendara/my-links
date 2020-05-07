@@ -2,6 +2,7 @@ import React, { Component, useState, useEffect } from "react";
 import { render } from "react-dom";
 import { List } from "./list";
 import { Auth } from "./auth";
+import { Start } from "./start"
 
 import Settings from "./Settings";
 
@@ -105,6 +106,11 @@ const App = () => {
           addItemHandle={addItemHandle}
           removeItemHandle={removeItemHandle}
         />
+      )}
+
+      {username.length == 0 && 
+      (
+      <Start />
       )}
     </div>
     </>
