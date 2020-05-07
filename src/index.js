@@ -90,14 +90,14 @@ const App = () => {
   };
 
   return (
-    <div className="container">
-      <br />
+    <>
       <nav className="navbar navbar-dark bg-dark">
-        <a className="navbar-brand mr-auto " href="#" >
+        <a className="navbar-nav scroll navbar-brand " href="#" >
           Home
         </a>
         <Auth authSuccessCallback={authSuccessCallback} />
       </nav>
+      <div className="container">
       <hr />
       {username.length > 0 && (
         <List
@@ -107,6 +107,7 @@ const App = () => {
         />
       )}
     </div>
+    </>
   );
 };
 
