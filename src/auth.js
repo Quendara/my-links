@@ -68,6 +68,8 @@ const Auth = ({ authSuccessCallback }) => {
       // send ONLY when it's filled out
       // authSuccessCallback(token);
 
+      setTrySend( true );
+
       authImpl(username, password);
     } else {
     }
@@ -135,9 +137,10 @@ const Auth = ({ authSuccessCallback }) => {
 
         setAuthError("Success" + JSON.stringify(decoded));
         setCognitoUser(cognitoUser);
+        setTrySend( false );
       },
-
       onFailure: function(err) {
+        setTrySend( false );
         console.error("Cannot log in ", JSON.stringify(err));
         setAuthError("Cannot log in " + JSON.stringify(err));
       }
@@ -157,6 +160,7 @@ const Auth = ({ authSuccessCallback }) => {
 
   if (cognitoUser == null) {
     return (
+      <>
       <form className="form-inline" onSubmit={handleClick}>
         <input
           value={username}
@@ -171,12 +175,14 @@ const Auth = ({ authSuccessCallback }) => {
           placeholder="Password"
           onChange={e => setPassword(e.target.value)}
         />
-        <button className="btn btn-primary m-2">
-          Sign-In
+        <button className="btn btn-primary m-2">          
+          { trySend ? "Loading" : "Sign-In"  }
           <FontAwesomeIcon icon={faAngleDoubleRight} className="ml-2" />
         </button>
-        {authError}
       </form>
+              
+        {authError}
+      </>
     );
   } else {
     return (
